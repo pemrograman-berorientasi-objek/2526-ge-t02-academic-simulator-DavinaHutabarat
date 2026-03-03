@@ -7,137 +7,125 @@ package academic.driver; // Mendefinisikan paket untuk kelas Driver4
  */
 
 // Mengimpor semua kelas model yang akan digunakan
+
 import academic.model.Course;
 import academic.model.Student;
 import academic.model.Enrollment;
-
-import java.util.ArrayList; // Untuk menyimpan objek secara dinamis
-import java.util.Scanner;   // Untuk membaca input dari pengguna
+import java.util.Scanner;
 
 public class Driver4 {
+    // Ukuran array statis maksimum untuk menyimpan setiap jenis entitas
+    private static final int MAX_ENTITIES = 100; // Dapat disesuaikan
+
+    // Array untuk Course
+    private static Course[] courses = new Course[MAX_ENTITIES];
+    private static int courseCount = 0; // Melacak jumlah Course yang ditambahkan
+
+    // Array untuk Student
+    private static Student[] students = new Student[MAX_ENTITIES];
+    private static int studentCount = 0; // Melacak jumlah Student yang ditambahkan
+
+    // Array untuk Enrollment
+    private static Enrollment[] enrollments = new Enrollment[MAX_ENTITIES];
+    private static int enrollmentCount = 0; // Melacak jumlah Enrollment yang ditambahkan
 
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in); // Objek Scanner untuk membaca input
-        
-        // Tiga ArrayList terpisah untuk menyimpan masing-masing jenis objek
-        ArrayList<Course> tempCourseList = new ArrayList<>();
-        ArrayList<Student> tempStudentList = new ArrayList<>();
-        ArrayList<Enrollment> tempEnrollmentList = new ArrayList<>();
-
-        System.out.println("=== Sistem Informasi Akademik Terintegrasi ===");
-        System.out.println("Masukkan data (format: [command]#data1#data2...).");
-        System.out.println("Gunakan 'course-add', 'student-add', atau 'enrollment-add'.");
-        System.out.println("Ketik '---' untuk berhenti dan menampilkan hasil.");
-
+        Scanner scanner = new Scanner(System.in); // Objek Scanner untuk membaca input
         String line; // Variabel untuk menyimpan setiap baris input
-        while (input.hasNextLine()) { // Terus membaca selama ada baris input
-            line = input.nextLine(); // Baca satu baris input
 
-            if (line.equals("---")) { // Jika input adalah '---', berhenti
-                break;
+        // Loop utama untuk membaca input hingga pengguna mengetik "---"
+        while (scanner.hasNextLine()) {
+            line = scanner.nextLine(); // Baca satu baris input
+
+            // Cek jika input adalah tanda berhenti
+            if (line.equals("---")) {
+                break; // Keluar dari loop jika "---" ditemukan
             }
 
-            // Memecah baris input menjadi command dan data
-            // Contoh: "course-add#12S2203#Object-oriented Programming#3#C"
-            // segments[0] = "course-add"
-            // segments[1] = "12S2203#Object-oriented Programming#3#C"
-            String[] segments = line.split("#", 2); // Split hanya pada '#' pertama
+            // Memproses setiap baris input
+            // Format input: command#data1#data2#...
+            String[] segments = line.split("#");
+            String command = segments[0]; // Bagian pertama adalah perintah
 
-            if (segments.length < 2) {
-                System.err.println("Peringatan: Format input tidak sesuai (command atau data tidak lengkap): " + line);
-                continue; // Lewati baris ini dan lanjutkan ke input berikutnya
-            }
-
-            String command = segments[0];
-            String dataString = segments[1]; // Sisa string setelah command
-
-            // Memproses input berdasarkan command
             switch (command) {
                 case "course-add":
-                    // Data course memiliki 4 segmen: Code#Name#SKS#Grade
-                    String[] courseData = dataString.split("#");
-                    if (courseData.length == 4) {
-                        String code = courseData[0];
-                        String name = courseData[1];
-                        int sks = 0;
-                        try {
-                            sks = Integer.parseInt(courseData[2]);
-                        } catch (NumberFormatException e) {
-                            System.err.println("Peringatan: SKS tidak valid untuk course: " + line);
-                            break; // Keluar dari switch, bukan dari loop utama
+                    // Format: course-add#code#name#credits#grade
+                    if (segments.length == 5) {
+                        String code = segments[1];
+                        String name = segments[2];
+                        int credits = Integer.parseInt(segments[3]); // Konversi String ke int
+                        String grade = segments[4]; // Nilai default Course, contoh 'C'
+                        
+                        if (courseCount < MAX_ENTITIES) {
+                            courses[courseCount] = new Course(code, name, credits, grade);
+                            courseCount++;
+                        } else {
+                            System.err.println("Penyimpanan Course penuh, tidak bisa menambah lagi: " + line);
                         }
-                        String grade = courseData[3];
-                        tempCourseList.add(new Course(code, name, sks, grade));
                     } else {
-                        System.err.println("Peringatan: Format data course tidak sesuai: " + line);
+                        System.err.println("Format input 'course-add' tidak valid: " + line);
                     }
                     break;
-
                 case "student-add":
-                    // Data student memiliki 4 segmen: NIM#Name#EntranceYear#Major
-                    String[] studentData = dataString.split("#");
-                    if (studentData.length == 4) {
-                        String nim = studentData[0];
-                        String name = studentData[1];
-                        int entranceYear = 0;
-                        try {
-                            entranceYear = Integer.parseInt(studentData[2]);
-                        } catch (NumberFormatException e) {
-                            System.err.println("Peringatan: Tahun masuk tidak valid untuk student: " + line);
-                            break;
+                    // Format: student-add#id#name#entryYear#studyProgram
+                    if (segments.length == 5) {
+                        String id = segments[1];
+                        String name = segments[2];
+                        String entryYear = segments[3];
+                        String studyProgram = segments[4];
+
+                        if (studentCount < MAX_ENTITIES) {
+                            students[studentCount] = new Student(id, name, entryYear, studyProgram);
+                            studentCount++;
+                        } else {
+                            System.err.println("Penyimpanan Student penuh, tidak bisa menambah lagi: " + line);
                         }
-                        String major = studentData[3];
-                        tempStudentList.add(new Student(nim, name, entranceYear, major));
                     } else {
-                        System.err.println("Peringatan: Format data student tidak sesuai: " + line);
+                        System.err.println("Format input 'student-add' tidak valid: " + line);
                     }
                     break;
-
                 case "enrollment-add":
-                    // Data enrollment memiliki 4 segmen: CourseCode#StudentNim#AcademicYear#Semester
-                    String[] enrollmentData = dataString.split("#");
-                    if (enrollmentData.length == 4) {
-                        String courseCode = enrollmentData[0];
-                        String studentNim = enrollmentData[1];
-                        String academicYear = enrollmentData[2];
-                        String semester = enrollmentData[3];
-                        // Grade otomatis "None" dari konstruktor Enrollment
-                        tempEnrollmentList.add(new Enrollment(courseCode, studentNim, academicYear, semester));
+                    // Format: enrollment-add#courseCode#studentId#academicYear#semester
+                    if (segments.length == 5) {
+                        String courseCode = segments[1];
+                        String studentId = segments[2];
+                        String academicYear = segments[3];
+                        String semester = segments[4];
+
+                        // Grade akan diinisialisasi "None" oleh konstruktor Enrollment
+                        if (enrollmentCount < MAX_ENTITIES) {
+                            enrollments[enrollmentCount] = new Enrollment(courseCode, studentId, academicYear, semester);
+                            enrollmentCount++;
+                        } else {
+                            System.err.println("Penyimpanan Enrollment penuh, tidak bisa menambah lagi: " + line);
+                        }
                     } else {
-                        System.err.println("Peringatan: Format data enrollment tidak sesuai: " + line);
+                        System.err.println("Format input 'enrollment-add' tidak valid: " + line);
                     }
                     break;
-
                 default:
-                    System.err.println("Peringatan: Command tidak dikenal: " + command + " di baris: " + line);
+                    System.err.println("Perintah tidak dikenal: " + command + " pada baris: " + line);
                     break;
             }
         }
 
-        // Setelah semua input selesai, konversi ArrayList ke array statis untuk demonstrasi
-        // konsep array sesuai permintaan.
-        Course[] courses = tempCourseList.toArray(new Course[0]);
-        Student[] students = tempStudentList.toArray(new Student[0]);
-        Enrollment[] enrollments = tempEnrollmentList.toArray(new Enrollment[0]);
-
-        System.out.println("\n=== Hasil Penyimpanan Data Akademik ===");
-
-        // Menampilkan Course terlebih dahulu
-        for (Course course : courses) {
-            System.out.println(course); // Memanggil method toString() dari objek Course
+        // --- Bagian Output ---
+        // 1. Tampilkan semua Course
+        for (int i = 0; i < courseCount; i++) {
+            System.out.println(courses[i].toString());
         }
 
-        // Kemudian menampilkan Student
-        for (Student student : students) {
-            System.out.println(student); // Memanggil method toString() dari objek Student
+        // 2. Tampilkan semua Student
+        for (int i = 0; i < studentCount; i++) {
+            System.out.println(students[i].toString());
         }
 
-        // Terakhir menampilkan Enrollment
-        for (Enrollment enrollment : enrollments) {
-            System.out.println(enrollment); // Memanggil method toString() dari objek Enrollment
+        // 3. Tampilkan semua Enrollment
+        for (int i = 0; i < enrollmentCount; i++) {
+            System.out.println(enrollments[i].toString());
         }
 
-        input.close(); // Menutup objek Scanner
-        System.out.println("\nProgram selesai.");
+        scanner.close(); // Tutup objek Scanner
     }
 }
+//davina

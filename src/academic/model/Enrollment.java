@@ -6,39 +6,28 @@ package academic.model; // Mendefinisikan paket untuk kelas Enrollment
  */
 
 
-
 public class Enrollment {
-    // Atribut-atribut kelas Enrollment. Dibuat private untuk enkapsulasi.
-    private String courseCode;   // Kode Mata Kuliah yang didaftarkan
-    private String studentNim;   // NIM Mahasiswa yang mendaftar
-    private String academicYear; // Tahun Ajaran (misal: 2021/2022)
-    private String semester;     // Jenis Semester (misal: even/odd)
-    private String grade;        // Nilai untuk pendaftaran ini (default "None")
+    private String courseCode;
+    private String studentId;
+    private String academicYear;
+    private String semester;
+    private String grade; // Nilai huruf, default "None" jika belum ada
 
-    /**
-     * Konstruktor untuk membuat objek Enrollment baru.
-     * @param courseCode Kode Mata Kuliah
-     * @param studentNim NIM Mahasiswa
-     * @param academicYear Tahun Ajaran
-     * @param semester Jenis Semester (even/odd)
-     */
-    public Enrollment(String courseCode, String studentNim, String academicYear, String semester) {
+    public Enrollment(String courseCode, String studentId, String academicYear, String semester) {
         this.courseCode = courseCode;
-        this.studentNim = studentNim;
+        this.studentId = studentId;
         this.academicYear = academicYear;
         this.semester = semester;
-        this.grade = "None"; // Sesuai permintaan, nilai default adalah "None"
+        this.grade = "None"; // Inisialisasi default grade sesuai output yang diminta
     }
 
-    // Metode getter untuk mengakses nilai atribut dari luar kelas.
-    // Tidak ada setter karena kita asumsikan data pendaftaran dan nilainya tidak diubah setelah dibuat di tahap ini.
-
+    // Getter methods
     public String getCourseCode() {
         return courseCode;
     }
 
-    public String getStudentNim() {
-        return studentNim;
+    public String getStudentId() {
+        return studentId;
     }
 
     public String getAcademicYear() {
@@ -53,14 +42,15 @@ public class Enrollment {
         return grade;
     }
 
-    /**
-     * Metode ini akan dipanggil secara otomatis saat objek Enrollment dicetak.
-     * Kita format outputnya sesuai permintaan, menggunakan '|' sebagai separator dan menambahkan "None" untuk nilai.
-     * @return String representasi objek Enrollment.
-     */
+    // Setter method for grade (jika nanti dibutuhkan untuk update nilai)
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
+    // Overriding toString method untuk format output yang diminta
     @Override
     public String toString() {
-        // Menggabungkan atribut dengan pemisah '|'
-        return courseCode + "|" + studentNim + "|" + academicYear + "|" + semester + "|" + grade;
+        return courseCode + "|" + studentId + "|" + academicYear + "|" + semester + "|" + grade;
     }
 }
+//davina

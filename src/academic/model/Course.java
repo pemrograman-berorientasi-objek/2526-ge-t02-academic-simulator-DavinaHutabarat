@@ -6,30 +6,21 @@ package academic.model; // Mendefinisikan paket untuk kelas Course
  */
 
 
+
 public class Course {
-    // Atribut-atribut kelas Course. Dibuat private untuk enkapsulasi.
     private String code;
     private String name;
-    private int sks;
-    private String grade;
+    private int credits;
+    private String grade; // Nilai huruf
 
-    /**
-     * Konstruktor untuk membuat objek Course baru.
-     * @param code Kode mata kuliah (misal: 12S2203)
-     * @param name Nama mata kuliah (misal: Object-oriented Programming)
-     * @param sks Jumlah SKS (misal: 3)
-     * @param grade Nilai mata kuliah (misal: A, B, C)
-     */
-    public Course(String code, String name, int sks, String grade) {
+    public Course(String code, String name, int credits, String grade) {
         this.code = code;
         this.name = name;
-        this.sks = sks;
+        this.credits = credits;
         this.grade = grade;
     }
 
-    // Metode getter untuk mengakses nilai atribut dari luar kelas.
-    // Tidak ada setter karena kita asumsikan data course tidak akan diubah setelah dibuat.
-
+    // Getter methods
     public String getCode() {
         return code;
     }
@@ -38,22 +29,18 @@ public class Course {
         return name;
     }
 
-    public int getSks() {
-        return sks;
+    public int getCredits() {
+        return credits;
     }
 
     public String getGrade() {
         return grade;
     }
 
-    /**
-     * Metode ini akan dipanggil secara otomatis saat objek Course dicetak.
-     * Kita format outputnya sesuai permintaan, menggunakan '|' sebagai separator.
-     * @return String representasi objek Course.
-     */
+    // Overriding toString method untuk format output
     @Override
     public String toString() {
-        // Menggabungkan atribut dengan pemisah '|'
-        return code + "|" + name + "|" + sks + "|" + grade;
+        return code + "|" + name + "|" + credits + "|" + grade;
     }
 }
+//davina

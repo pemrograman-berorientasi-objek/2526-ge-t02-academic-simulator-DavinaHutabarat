@@ -5,67 +5,62 @@ package academic.driver; // Mendefinisikan paket untuk kelas Driver3
  * @DavinaOlivia 12S24047 Davina Olivia
  */
 
-import academic.model.Enrollment; // Mengimpor kelas Enrollment dari paket academic.model
-import java.util.ArrayList;     // Mengimpor ArrayList untuk penampung sementara
-import java.util.Scanner;       // Mengimpor Scanner untuk input dari pengguna
+
+
+import academic.model.Enrollment;
+import java.util.Scanner; // Digunakan untuk membaca input dari konsol
 
 public class Driver3 {
+    // Ukuran array statis untuk menyimpan objek Enrollment.
+    // Anda bisa mengubah ukuran ini sesuai kebutuhan.
+    private static final int MAX_ENROLLMENTS = 100;
+    private static Enrollment[] enrollments = new Enrollment[MAX_ENROLLMENTS];
+    private static int enrollmentCount = 0; // Melacak jumlah enrollment yang sudah ditambahkan
 
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in); // Objek Scanner untuk membaca input
-        
-        // Kita gunakan ArrayList sebagai penampung sementara karena kita tidak tahu
-        // berapa banyak pendaftaran yang akan dimasukkan.
-        ArrayList<Enrollment> tempEnrollmentList = new ArrayList<>(); 
-
-        System.out.println("=== Sistem Penyimpanan Data Pendaftaran Mata Kuliah ===");
-        System.out.println("Masukkan data pendaftaran (format: KodeMK#NIM#TahunAkademik#Semester).");
-        System.out.println("Ketik '---' untuk berhenti dan menampilkan hasil.");
-
+        Scanner scanner = new Scanner(System.in); // Objek Scanner untuk membaca input
         String line; // Variabel untuk menyimpan setiap baris input
-        while (input.hasNextLine()) { // Terus membaca selama ada baris input
-            line = input.nextLine(); // Baca satu baris input
 
-            if (line.equals("---")) { // Jika input adalah '---', berhenti
-                break;
+        // Loop utama untuk membaca input hingga pengguna mengetik "---"
+        while (scanner.hasNextLine()) {
+            line = scanner.nextLine(); // Baca satu baris input
+
+            // Cek jika input adalah tanda berhenti
+            if (line.equals("---")) {
+                break; // Keluar dari loop jika "---" ditemukan
             }
 
-            // Memecah baris input berdasarkan karakter '#'
-            // Contoh: "12S2203#12S20999#2021/2022#even" akan menjadi array String:
-            // ["12S2203", "12S20999", "2021/2022", "even"]
-            String[] segments = line.split("#"); 
+            // Memproses setiap baris input data enrollment
+            // Contoh format input: 12S2203#12S20999#2021/2022#even
+            String[] segments = line.split("#"); // Pisahkan string berdasarkan "#"
 
-            // Validasi sederhana: memastikan ada 4 segmen data
+            // Validasi format input: harus ada 4 bagian (CourseCode, StudentID, AcademicYear, Semester)
             if (segments.length == 4) {
                 String courseCode = segments[0];
-                String studentNim = segments[1];
+                String studentId = segments[1];
                 String academicYear = segments[2];
                 String semester = segments[3];
-                
-                // Membuat objek Enrollment baru dari data yang sudah dipecah
-                Enrollment enrollment = new Enrollment(courseCode, studentNim, academicYear, semester);
-                tempEnrollmentList.add(enrollment); // Menambahkan objek Enrollment ke ArrayList
+
+                // Tambahkan objek Enrollment baru ke array jika masih ada ruang
+                if (enrollmentCount < MAX_ENROLLMENTS) {
+                    enrollments[enrollmentCount] = new Enrollment(courseCode, studentId, academicYear, semester);
+                    enrollmentCount++; // Tambah hitungan enrollment
+                } else {
+                    // Beri peringatan jika array penuh
+                    System.err.println("Penyimpanan enrollment penuh, tidak bisa menambah lagi: " + line);
+                }
             } else {
-                System.err.println("Peringatan: Format input tidak sesuai untuk baris ini: " + line);
+                // Beri peringatan jika format input tidak valid
+                System.err.println("Format input tidak valid untuk enrollment: " + line);
             }
         }
 
-        // Setelah semua input selesai, kita konversi ArrayList ke array statis Enrollment[].
-        // Ini memenuhi syarat "Gunakan array sebagai media penyimpanan" secara eksplisit
-        // setelah jumlah elemen diketahui.
-        Enrollment[] enrollments = tempEnrollmentList.toArray(new Enrollment[0]);
-
-        System.out.println("\n=== Daftar Pendaftaran Mata Kuliah Tersimpan ===");
-        if (enrollments.length == 0) {
-            System.out.println("Tidak ada data pendaftaran yang disimpan.");
-        } else {
-            // Iterasi melalui array enrollments dan tampilkan setiap objek Enrollment
-            for (Enrollment enrollment : enrollments) {
-                System.out.println(enrollment); // Memanggil method toString() dari objek Enrollment
-            }
+        // Setelah semua input selesai, tampilkan semua objek Enrollment yang tersimpan
+        for (int i = 0; i < enrollmentCount; i++) {
+            System.out.println(enrollments[i].toString()); // Gunakan method toString untuk format output
         }
 
-        input.close(); // Menutup objek Scanner untuk mencegah resource leak
-        System.out.println("\nProgram selesai.");
+        scanner.close(); // Tutup objek Scanner untuk mencegah resource leak
     }
 }
+//davina
